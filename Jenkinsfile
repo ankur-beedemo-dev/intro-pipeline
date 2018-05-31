@@ -55,3 +55,33 @@ pipeline {
     string(name: 'Name', defaultValue: 'whoever you are', description: 'Who should I say hi to?')
   }
 }
+
+pipeline {
+    agent none
+    stages {
+        stage('Publish Event') {
+            steps {
+                publishEvent simpleEvent('marfatiaEvent')
+            }
+        }
+    }
+}
+
+pipeline {
+    agent none
+    triggers {
+        eventTrigger simpleMatch('marfatiaEvent')
+    }
+    stages {
+        stage('Event Trigger') {
+            when {
+                expression { 
+                    return currentBuild.rawBuild.getCause(com.cloudbees.jenkins.plugins.pipeline.events.EventTriggerCause)
+                }
+            }
+            steps {
+                echo 'triggered by published event'
+            }
+        }
+    }
+}
