@@ -1,4 +1,7 @@
 pipeline {
+  libraries {
+    lib("SharedLibs")
+  }
   agent {
     label 'jdk8'
   }
@@ -16,6 +19,11 @@ pipeline {
         checkpoint 'Checkpoint'
       }
     }
+    stage('Shared Lib') {
+         steps {
+             helloWorld("Jenkins")
+         }
+      }
    stage('Testing') {
         parallel {
           stage('Java 9') {
